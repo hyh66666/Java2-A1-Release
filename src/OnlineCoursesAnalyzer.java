@@ -20,17 +20,24 @@ public class OnlineCoursesAnalyzer {
         BufferedReader br = null;
         String line;
         try {
-            br = new BufferedReader(new FileReader(datasetPath, StandardCharsets.UTF_8));
+            br = new BufferedReader(new FileReader(datasetPath,
+                    StandardCharsets.UTF_8));
             br.readLine();
             while ((line = br.readLine()) != null) {
-                String[] info = line.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)", -1);
-                Course course = new Course(info[0], info[1], new Date(info[2]), info[3], info[4], info[5],
+                String[] info = line.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",
+                        -1);
+                Course course = new Course(info[0], info[1], new Date(info[2]),
+                        info[3], info[4], info[5],
                         Integer.parseInt(info[6]), Integer.parseInt(info[7]), Integer.parseInt(info[8]),
                         Integer.parseInt(info[9]), Integer.parseInt(info[10]), Double.parseDouble(info[11]),
-                        Double.parseDouble(info[12]), Double.parseDouble(info[13]), Double.parseDouble(info[14]),
-                        Double.parseDouble(info[15]), Double.parseDouble(info[16]), Double.parseDouble(info[17]),
-                        Double.parseDouble(info[18]), Double.parseDouble(info[19]), Double.parseDouble(info[20]),
-                        Double.parseDouble(info[21]), Double.parseDouble(info[22]));
+                        Double.parseDouble(info[12]),
+                        Double.parseDouble(info[13]), Double.parseDouble(info[14]),
+                        Double.parseDouble(info[15]),
+                        Double.parseDouble(info[16]), Double.parseDouble(info[17]),
+                        Double.parseDouble(info[18]),
+                        Double.parseDouble(info[19]), Double.parseDouble(info[20]),
+                        Double.parseDouble(info[21]),
+                        Double.parseDouble(info[22]));
                 courses.add(course);
             }
         } catch (IOException e) {
@@ -79,7 +86,7 @@ public class OnlineCoursesAnalyzer {
         Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 int diff = -(o1.getValue().compareTo(o2.getValue()));
-                return diff!=0?diff:o1.getKey().compareTo(o2.getKey());
+                return diff != 0 ? diff : o1.getKey().compareTo(o2.getKey());
             }
         });
         // 创建新的有序Map
@@ -92,20 +99,19 @@ public class OnlineCoursesAnalyzer {
 
     //3
     public Map<String, List<List<String>>> getCourseListOfInstructor() {
-        Map<String, List<Map<String,Integer>>> result = new HashMap<>();
+        Map<String, List<Map<String, Integer>>> result = new HashMap<>();
         List<Course> in_list = new ArrayList<>();
         List<Course> co_list = new ArrayList<>();
         for (Course cours : courses) {
             String string = cours.instructors;
-            if (string.contains(",")){
+            if (string.contains(",")) {
                 co_list.add(cours);
-            }
-            else {
+            } else {
                 in_list.add(cours);
             }
             String[] strings = string.split(", ");
             for (String s : strings) {
-                List<Map<String, Integer>> list =new ArrayList<>();
+                List<Map<String, Integer>> list = new ArrayList<>();
                 Map<String, Integer> in_map = new HashMap<>();
                 Map<String, Integer> co_map = new HashMap<>();
                 list.add(in_map);
@@ -114,20 +120,20 @@ public class OnlineCoursesAnalyzer {
             }
         }
         Map<String, List<List<String>>> map = new HashMap<>();
-        for (Map.Entry<String, List<Map<String,Integer>>> entry : result.entrySet()) {
+        for (Map.Entry<String, List<Map<String, Integer>>> entry : result.entrySet()) {
             String mapKey = entry.getKey();
-            List<Map<String,Integer>> mapValue = entry.getValue();
+            List<Map<String, Integer>> mapValue = entry.getValue();
             List<List<String>> lists = new ArrayList<>();
             for (Course course : in_list) {
                 if (course.instructors.contains(mapKey)) {
-                    mapValue.get(0).put(course.title,1);
+                    mapValue.get(0).put(course.title, 1);
                 }
             }
             for (Course course : co_list) {
                 String[] strings = course.instructors.split(", ");
-                for (String name: strings){
+                for (String name: strings) {
                     if (name.equals(mapKey)) {
-                        mapValue.get(1).put(course.title,1);
+                        mapValue.get(1).put(course.title, 1);
                     }
                 }
 
@@ -136,7 +142,7 @@ public class OnlineCoursesAnalyzer {
             lists.add(new ArrayList<>(mapValue.get(1).keySet()));
             Collections.sort(lists.get(0), Comparator.naturalOrder());
             Collections.sort(lists.get(1), Comparator.naturalOrder());
-            map.put(mapKey,lists);
+            map.put(mapKey, lists);
         }
         return map;
     }
@@ -145,13 +151,13 @@ public class OnlineCoursesAnalyzer {
     public List<String> getCourses(int topK, String by) {
         if (by.equals("hours")) {
             Collections.sort(courses, (o1, o2) -> {
-                int diff = - Double.compare(o1.totalHours,o2.getTotalHours());
+                int diff = -Double.compare(o1.totalHours, o2.getTotalHours());
                 return diff != 0 ? diff : o1.title.compareTo(o2.getTitle());
             });
         }
         if (by.equals("participants")) {
             Collections.sort(courses, (o1, o2) -> {
-                int diff = -Integer.compare(o1.participants,o2.participants);
+                int diff = -Integer.compare(o1.participants, o2.participants);
                 return diff != 0 ? diff : o1.title.compareTo(o2.getTitle());
             });
         }
@@ -161,8 +167,8 @@ public class OnlineCoursesAnalyzer {
             Course course = courses.get(j);
             j++;
             String name = course.title;
-            if(!result.contains(name)){
-                result.add(name);}
+            if (!result.contains(name)) {
+                result.add(name); }
             else{
                 i--;
             }
